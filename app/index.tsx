@@ -2,13 +2,17 @@ import { ThemedView } from "@/components/themed-view";
 import { ThemedText } from "@/components/themed-text";
 import { Link } from "expo-router"
 import { View, TextInput, StyleSheet, Pressable } from 'react-native'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
+import { AuthContext } from "@/contexts/AuthContext";
+import { createUserWithEmailAndPassword } from "firebase/auth"
 
 export default function AuthScreen() {
     const [email,setEmail] = useState<string>("")
     const [validEmail,setValidEmail] = useState<boolean>(false)
     const [password,setPassword] = useState<string>("")
     const [validPassword,setValidPassword] = useState<boolean>(false)
+
+    const auth:any = useContext(AuthContext)
 
     useEffect( () => {
         // check for valid email
@@ -28,6 +32,12 @@ export default function AuthScreen() {
             setValidPassword(false)
         }
     }, [password])
+
+    const signUp = () => {
+        createUserWithEmailAndPassword(auth,email,password)
+        .then((response) =>  console.log(response) )
+        .catch((error) => console.log(error) )
+    }
 
     return (
         <ThemedView style={styles.container}>
@@ -49,6 +59,7 @@ export default function AuthScreen() {
                 <Pressable 
                     style={(validEmail && validPassword ) ? styles.button : styles.buttonDisabled }
                     disabled={(validEmail && validPassword) ? false : true }
+                    onPress={ () => signUp() }
                 >
                     <ThemedText style={styles.buttonText}>Sign up</ThemedText>
                 </Pressable>
