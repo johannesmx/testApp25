@@ -5,7 +5,7 @@ import { View, TextInput, StyleSheet, Pressable, ActivityIndicator } from 'react
 import { useState, useEffect, useContext } from 'react'
 import { AuthContext } from "@/contexts/AuthContext";
 import {
-    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
     onAuthStateChanged
 }
     from "firebase/auth"
@@ -51,48 +51,43 @@ export default function AuthScreen() {
     }, [password])
 
     const signUp = () => {
-        createUserWithEmailAndPassword(auth, email, password)
+        signInWithEmailAndPassword(auth, email, password)
             .then((response) => console.log(response))
             .catch((error) => console.log(error))
     }
-    if (authenticating) {
-        <ThemedView style={styles.container}>
-            <ActivityIndicator size="large" color="yellow" />
-        </ThemedView>
-    }
-    else {
-        return (
-            <ThemedView style={styles.container}>
-                <View style={styles.form}>
-                    <ThemedText style={styles.title} >Sign up for an account</ThemedText>
-                    <ThemedText>Email</ThemedText>
-                    <TextInput
-                        style={(validEmail) ? styles.validInput : styles.input}
-                        value={email}
-                        onChangeText={(val) => setEmail(val)}
-                    />
 
-                    <ThemedText>Password</ThemedText>
-                    <TextInput
-                        style={(validPassword) ? styles.validInput : styles.input}
-                        secureTextEntry={true}
-                        value={password}
-                        onChangeText={(val) => setPassword(val)}
-                    />
-                    <Pressable
-                        style={(validEmail && validPassword) ? styles.button : styles.buttonDisabled}
-                        disabled={(validEmail && validPassword) ? false : true}
-                        onPress={() => signUp()}
-                    >
-                        <ThemedText style={styles.buttonText}>Sign up</ThemedText>
-                    </Pressable>
-                </View>
-                <Pressable onPress={ () => router.navigate("/signin") }>
-                    <ThemedText style={styles.altlink}>Already have an account? Go to sign in</ThemedText>
+    return (
+        <ThemedView style={styles.container}>
+            <View style={styles.form}>
+                <ThemedText style={styles.title} >Sign in to your account</ThemedText>
+                <ThemedText>Email</ThemedText>
+                <TextInput
+                    style={(validEmail) ? styles.validInput : styles.input}
+                    value={email}
+                    onChangeText={(val) => setEmail(val)}
+                />
+
+                <ThemedText>Password</ThemedText>
+                <TextInput
+                    style={(validPassword) ? styles.validInput : styles.input}
+                    secureTextEntry={true}
+                    value={password}
+                    onChangeText={(val) => setPassword(val)}
+                />
+                <Pressable
+                    style={(validEmail && validPassword) ? styles.button : styles.buttonDisabled}
+                    disabled={(validEmail && validPassword) ? false : true}
+                    onPress={() => signUp()}
+                >
+                    <ThemedText style={styles.buttonText}>Sign in</ThemedText>
                 </Pressable>
-            </ThemedView>
-        )
-    }
+            </View>
+            <Pressable onPress={ () => router.navigate("/") }>
+                    <ThemedText style={styles.altlink}>Don't have an account? Go to sign up</ThemedText>
+                </Pressable>
+        </ThemedView>
+    )
+
 }
 
 const styles = StyleSheet.create({
