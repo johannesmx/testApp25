@@ -2,6 +2,7 @@ import { ThemedView } from "@/components/themed-view";
 import { ThemedText } from "@/components/themed-text";
 import { Link } from "expo-router"
 import { View, TextInput, StyleSheet, Pressable } from 'react-native'
+import { ThemedInput } from "@/components/themed-input"
 import { useState, useEffect, useContext } from 'react'
 import { AuthContext } from "@/contexts/AuthContext";
 import { createUserWithEmailAndPassword } from "firebase/auth"
@@ -46,8 +47,13 @@ export default function AuthScreen() {
                 <ThemedText>Email</ThemedText>
                 <TextInput 
                     style={(validEmail) ? styles.validInput : styles.input} 
-                    value={email}
-                    onChangeText={ (val) => setEmail(val) }
+                    // value={email}
+                    // onChangeText={ (val) => setEmail(val) }
+                />
+                <ThemedInput 
+                    value={email} 
+                    onChangeText={ (val) => setEmail(val) } 
+                    style={(validEmail) ? styles.validInput : styles.input}
                 />
                 <ThemedText>Password</ThemedText>
                 <TextInput 
@@ -85,7 +91,7 @@ const styles = StyleSheet.create({
         borderColor: "#666666",
         borderStyle: "solid",
         borderRadius: 5,
-        color: "#FFFFFF",
+        // color: "#FFFFFF",
         padding: 5,
         marginBottom: 10,
     },
@@ -94,7 +100,7 @@ const styles = StyleSheet.create({
         borderColor: "#14e383",
         borderStyle: "solid",
         borderRadius: 5,
-        color: "#FFFFFF",
+        // color: "#FFFFFF",
         padding: 5,
         marginBottom: 10,
     },
