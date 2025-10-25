@@ -1,12 +1,11 @@
 import { ThemedView } from "@/components/themed-view";
 import { ThemedText } from "@/components/themed-text";
-import { ThemedInput } from "@/components/themed-input";
 import { Link, useRouter } from "expo-router"
 import { View, TextInput, StyleSheet, Pressable, ActivityIndicator } from 'react-native'
 import { useState, useEffect, useContext } from 'react'
 import { AuthContext } from "@/contexts/AuthContext";
 import {
-    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
     onAuthStateChanged
 }
     from "firebase/auth"
@@ -52,81 +51,43 @@ export default function AuthScreen() {
     }, [password])
 
     const signUp = () => {
-        createUserWithEmailAndPassword(auth, email, password)
+        signInWithEmailAndPassword(auth, email, password)
             .then((response) => console.log(response))
             .catch((error) => console.log(error))
     }
-    if (authenticating) {
+
+    return (
         <ThemedView style={styles.container}>
             <View style={styles.form}>
-                <ThemedText style={styles.title} >Sign up for an account</ThemedText>
+                <ThemedText style={styles.title} >Sign in to your account</ThemedText>
                 <ThemedText>Email</ThemedText>
-                {/* <TextInput 
-                    style={(validEmail) ? styles.validInput : styles.input} 
-                    // value={email}
-                    // onChangeText={ (val) => setEmail(val) }
-                /> */}
-                <ThemedInput 
-                    value={email} 
-                    onChangeText={ (val) => setEmail(val) } 
+                <TextInput
                     style={(validEmail) ? styles.validInput : styles.input}
+                    value={email}
+                    onChangeText={(val) => setEmail(val)}
                 />
+
                 <ThemedText>Password</ThemedText>
-                {/* <TextInput 
-                    style={(validPassword) ? styles.validInput : styles.input} 
+                <TextInput
+                    style={(validPassword) ? styles.validInput : styles.input}
                     secureTextEntry={true}
                     value={password}
-                    onChangeText={ (val) => setPassword(val) }
-                /> */}
-                <ThemedInput 
-                    value={password} 
-                    secureTextEntry={true}
-                    onChangeText={ (val) => setPassword(val) } 
-                    style={(validPassword) ? styles.validInput : styles.input}
+                    onChangeText={(val) => setPassword(val)}
                 />
-                <Pressable 
-                    style={(validEmail && validPassword ) ? styles.button : styles.buttonDisabled }
-                    disabled={(validEmail && validPassword) ? false : true }
-                    onPress={ () => signUp() }
+                <Pressable
+                    style={(validEmail && validPassword) ? styles.button : styles.buttonDisabled}
+                    disabled={(validEmail && validPassword) ? false : true}
+                    onPress={() => signUp()}
                 >
-                    <ThemedText style={styles.buttonText}>Sign up</ThemedText>
+                    <ThemedText style={styles.buttonText}>Sign in</ThemedText>
                 </Pressable>
             </View>
-        </ThemedView>
-    }
-    else {
-        return (
-            <ThemedView style={styles.container}>
-                <View style={styles.form}>
-                    <ThemedText style={styles.title} >Sign up for an account</ThemedText>
-                    <ThemedText>Email</ThemedText>
-                    <TextInput
-                        style={(validEmail) ? styles.validInput : styles.input}
-                        value={email}
-                        onChangeText={(val) => setEmail(val)}
-                    />
-
-                    <ThemedText>Password</ThemedText>
-                    <TextInput
-                        style={(validPassword) ? styles.validInput : styles.input}
-                        secureTextEntry={true}
-                        value={password}
-                        onChangeText={(val) => setPassword(val)}
-                    />
-                    <Pressable
-                        style={(validEmail && validPassword) ? styles.button : styles.buttonDisabled}
-                        disabled={(validEmail && validPassword) ? false : true}
-                        onPress={() => signUp()}
-                    >
-                        <ThemedText style={styles.buttonText}>Sign up</ThemedText>
-                    </Pressable>
-                </View>
-                <Pressable onPress={ () => router.navigate("/signin") }>
-                    <ThemedText style={styles.altlink}>Already have an account? Go to sign in</ThemedText>
+            <Pressable onPress={ () => router.navigate("/") }>
+                    <ThemedText style={styles.altlink}>Don't have an account? Go to sign up</ThemedText>
                 </Pressable>
-            </ThemedView>
-        )
-    }
+        </ThemedView>
+    )
+
 }
 
 const styles = StyleSheet.create({
