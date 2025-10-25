@@ -45,22 +45,28 @@ export default function AuthScreen() {
             <View style={styles.form}>
                 <ThemedText style={styles.title} >Sign up for an account</ThemedText>
                 <ThemedText>Email</ThemedText>
-                <TextInput 
+                {/* <TextInput 
                     style={(validEmail) ? styles.validInput : styles.input} 
                     // value={email}
                     // onChangeText={ (val) => setEmail(val) }
-                />
+                /> */}
                 <ThemedInput 
                     value={email} 
                     onChangeText={ (val) => setEmail(val) } 
                     style={(validEmail) ? styles.validInput : styles.input}
                 />
                 <ThemedText>Password</ThemedText>
-                <TextInput 
+                {/* <TextInput 
                     style={(validPassword) ? styles.validInput : styles.input} 
                     secureTextEntry={true}
                     value={password}
                     onChangeText={ (val) => setPassword(val) }
+                /> */}
+                <ThemedInput 
+                    value={password} 
+                    secureTextEntry={true}
+                    onChangeText={ (val) => setPassword(val) } 
+                    style={(validPassword) ? styles.validInput : styles.input}
                 />
                 <Pressable 
                     style={(validEmail && validPassword ) ? styles.button : styles.buttonDisabled }
