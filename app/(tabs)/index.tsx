@@ -1,10 +1,30 @@
 import { Platform, StyleSheet } from 'react-native';
+import { useContext, useState, useEffect } from 'react';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { DataContext } from '@/contexts/DataContext';
+
+import { collection, Firestore, getDocs } from 'firebase/firestore';
 
 export default function HomeScreen() {
+  const [data,setData] = useState([])
+  // initialise firestore through context
+  const db:any = useContext( DataContext )
+
+  const getData = async () => {
+    const fsdata = await getDocs( collection(db, "shared") )
+    let items = []
+    fsdata.forEach( (fsdoc) => {
+      let item = fsdoc.data()
+      item.id = fsdoc.id
+      items.push( item )
+    })
+    setData( items )
+  }
+
+
   return (
     <SafeAreaView style={styles.container}>
       <ThemedView>
