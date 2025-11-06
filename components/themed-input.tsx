@@ -18,6 +18,7 @@ const styles = StyleSheet.create({
         padding: 5,
         borderStyle: "solid",
         borderWidth: 1,
+        borderRadius: 10,
     },
     darkInput: {
         backgroundColor: "#222222",

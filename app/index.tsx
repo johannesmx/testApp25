@@ -82,7 +82,7 @@ export default function AuthScreen() {
                     value={password} 
                     secureTextEntry={true}
                     onChangeText={ (val) => setPassword(val) } 
-                    style={(validPassword) ? styles.validInput : styles.input}
+                    style={(validPassword) ? styles.validInput : styles.input }
                 />
                 <Pressable 
                     style={(validEmail && validPassword ) ? styles.button : styles.buttonDisabled }
@@ -143,19 +143,16 @@ const styles = StyleSheet.create({
     },
     input: {
         borderWidth: 2,
-        borderColor: "#666666",
-        borderStyle: "solid",
-        borderRadius: 5,
-        color: "#FFFFFF",
-        padding: 5,
+        // borderColor: "#666666",
+        // borderStyle: "solid",
+        // borderRadius: 5,
+        // padding: 5,
         marginBottom: 10,
     },
     validInput: {
         borderWidth: 2,
         borderColor: "#14e383",
         borderStyle: "solid",
-        borderRadius: 5,
-        color: "#FFFFFF",
         padding: 5,
         marginBottom: 10,
     },
