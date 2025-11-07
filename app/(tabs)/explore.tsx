@@ -1,112 +1,96 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
 
-import { Collapsible } from '@/components/ui/collapsible';
-import { ExternalLink } from '@/components/external-link';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
+import { Platform, StyleSheet, TextInput,Pressable, useColorScheme } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Fonts } from '@/constants/theme';
+import { AuthContext } from '@/contexts/AuthContext';
+import { DataContext } from '@/contexts/DataContext';
+import { useContext, useState } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore'
+
 
 export default function TabTwoScreen() {
+  const [userId,setUserId] = useState<string>("")
+  const [docName,setDocName] = useState<string>("")
+  const [docDesc, setDocDesc] = useState<string>("")
+
+  const scheme = useColorScheme()
+  const auth:any = useContext( AuthContext )
+  const db:any = useContext( DataContext )
+
+  onAuthStateChanged( auth, (user) => {
+    if( user ) {
+      setUserId( user.uid )
+      console.log( user.uid )
+    }
+    else {
+      // user is not authenticated
+    }
+  })
+
+  interface UserItem {
+    name: string
+    description: string
+  }
+  
+  const addData = async ( name:string , description:string ) => {
+    const path = `userdata/${userId}/trackerdata`
+    const docId:string = ( new Date ).getTime().toString()
+    await setDoc( doc( db, path, docId ), {
+      name,description
+    } )
+    console.log("success")
+  }
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
+    <SafeAreaView style={ styles.container }>
+      <ThemedView>
+        <ThemedText>Add data to user's collection</ThemedText>
+        <ThemedText>item name</ThemedText>
+        <TextInput 
+          style={ 
+            (scheme == 'dark') ? 
+            [styles.input, styles.inputDark ] : 
+            [styles.input, styles.inputLight] 
+          }
+          value = {docName}
+          onChangeText={ (value) => setDocName(value) }
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText
-          type="title"
-          style={{
-            fontFamily: Fonts.rounded,
-          }}>
-          Explore
-        </ThemedText>
+         <ThemedText>item description</ThemedText>
+        <TextInput 
+          style={ 
+            (scheme == 'dark') ?
+            [styles.input, styles.inputDark ] :
+              [styles.input, styles.inputLight] 
+            }
+            value = {docDesc}
+            onChangeText={ (value) => setDocDesc(value) }
+        />
+        <Pressable onPress={ () => { addData( docName, docDesc ) } }>
+          <ThemedText>Add</ThemedText>
+        </Pressable>
       </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image
-          source={require('@/assets/images/react-logo.png')}
-          style={{ width: 100, height: 100, alignSelf: 'center' }}
-        />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful{' '}
-          <ThemedText type="defaultSemiBold" style={{ fontFamily: Fonts.mono }}>
-            react-native-reanimated
-          </ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+     
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
+  container: {
+    flex: 1
   },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
+  input: {
+    borderStyle: "solid",
+    padding: 5,
+    borderWidth: 2,
+    borderRadius: 4,
   },
+  inputDark: {
+    color: "white",
+    borderColor: "#CCCCCC",
+  },
+  inputLight: {
+    color: "black",
+    borderColor: "#333333",
+  }
 });
