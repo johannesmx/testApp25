@@ -7,8 +7,8 @@ export function useAuthentication() {
 }
 
 export function AuthenticationProvider (props:unknown) {
-    const signIn = () {}
-    const signUp = () {}
-    const signOut = () {}
+    const signIn = () => {}
+    const signUp = () => {}
+    const signOut = () => {}
 
 }
