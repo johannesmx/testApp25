@@ -35,7 +35,7 @@ export default function TabLayout() {
         name="test"
         options={{
           title: 'Test Screen',
-          tabBarIcon: ({ color }:any) => <IconSymbol size={28} name="book" color={color} />,
+          tabBarIcon: ({ color }:any) => <IconSymbol size={28} name="list.bullet" color={color} />,
         }}
       />
     </Tabs>
