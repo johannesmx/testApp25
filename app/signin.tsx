@@ -53,7 +53,7 @@ export default function AuthScreen() {
     const signUp = () => {
         signInWithEmailAndPassword(auth, email, password)
             .then((response) => console.log(response))
-            .catch((error) => console.log(error))
+            .catch((error) => console.log(error.message))
     }
 
     return (
