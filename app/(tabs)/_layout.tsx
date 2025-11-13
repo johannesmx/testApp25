@@ -13,11 +13,18 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: true,
+        headerShown: false,
         tabBarButton: HapticTab,
       }}>
-      <Tabs.Screen
+      <Tabs.Screen 
         name="index"
+        options={{
+          title: 'Signup', href: null,
+          headerShow: false
+        }}
+      />
+      <Tabs.Screen
+        name="home"
         options={{
           title: 'Home',
           tabBarIcon: ({ color }:any) => <IconSymbol size={28} name="house.fill" color={color} />,

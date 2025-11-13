@@ -1,85 +1,186 @@
-import { Platform, StyleSheet, FlatList } from 'react-native';
-import { useContext, useState, useEffect } from 'react';
+import { ThemedView } from "@/components/themed-view";
+import { ThemedText } from "@/components/themed-text";
+import { ThemedInput } from "@/components/themed-input";
+import { Link, useRouter } from "expo-router"
+import { View, TextInput, StyleSheet, Pressable, ActivityIndicator } from 'react-native'
+import { useState, useEffect, useContext } from 'react'
+import { AuthContext } from "@/contexts/AuthContext";
+import {
+    createUserWithEmailAndPassword,
+    onAuthStateChanged
+}
+    from "firebase/auth"
 
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { DataContext } from '@/contexts/DataContext';
-import { Item } from '@/interfaces/ItemInterface'
+export default function AuthScreen() {
+    const [email, setEmail] = useState<string>("")
+    const [validEmail, setValidEmail] = useState<boolean>(false)
+    const [password, setPassword] = useState<string>("")
+    const [validPassword, setValidPassword] = useState<boolean>(false)
+    const [authenticating, setAuthenticating] = useState<boolean>(true)
 
-import { collection, Firestore, getDocs } from 'firebase/firestore';
+    const auth: any = useContext(AuthContext)
+    const router = useRouter()
 
-export default function HomeScreen() {
-  const [data,setData] = useState<Item[]>([])
-  const [loaded,setLoaded] = useState<boolean>(false)
-  // initialise firestore through context
-  const db:any = useContext( DataContext )
-
-  const getData = async () => {
-    const fsdata = await getDocs( collection(db, "shared") )
-    let items:Item[] = []
-    fsdata.forEach( (fsdoc) => {
-      let item:any = fsdoc.data()
-      item.id = fsdoc.id
-      items.push( item )
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            // user is authenticated
+            router.navigate("/(tabs)")
+        }
+        else {
+            // user is not authenticated
+            setAuthenticating(false)
+        }
     })
-    setData( items )
-    console.log("data")
-  }
 
-  interface ListItemProps {
-    title:string
-    id:string
-  }
+    useEffect(() => {
+        // check for valid email
+        if (email.indexOf('@') > 0) {
+            setValidEmail(true)
+        }
+        else {
+            setValidEmail(false)
+        }
+    }, [email])
 
-  const ListItem = (props:ListItemProps) => {
-    return (
-      <ThemedView>
-        <ThemedText>{ props.title }</ThemedText>
-      </ThemedView>
-    )
-  }
+    useEffect(() => {
+        if (password.length >= 8) {
+            setValidPassword(true)
+        }
+        else {
+            setValidPassword(false)
+        }
+    }, [password])
 
-  useEffect( () => {
-    //getData()
-    if(loaded==false) {
-      getData()
-      setLoaded(true)
+    const signUp = () => {
+        createUserWithEmailAndPassword(auth, email, password)
+            .then((response) => console.log(response))
+            .catch((error) => console.log(error))
     }
-  },[])
+    if (authenticating) {
+        <ThemedView style={styles.container}>
+            <View style={styles.form}>
+                <ThemedText style={styles.title} >Sign up for an account</ThemedText>
+                <ThemedText>Email</ThemedText>
+                {/* <TextInput 
+                    style={(validEmail) ? styles.validInput : styles.input} 
+                    // value={email}
+                    // onChangeText={ (val) => setEmail(val) }
+                /> */}
+                <ThemedInput 
+                    value={email} 
+                    onChangeText={ (val) => setEmail(val) } 
+                    style={(validEmail) ? styles.validInput : styles.input}
+                />
+                <ThemedText>Password</ThemedText>
+                {/* <TextInput 
+                    style={(validPassword) ? styles.validInput : styles.input} 
+                    secureTextEntry={true}
+                    value={password}
+                    onChangeText={ (val) => setPassword(val) }
+                /> */}
+                <ThemedInput 
+                    value={password} 
+                    secureTextEntry={true}
+                    onChangeText={ (val) => setPassword(val) } 
+                    style={(validPassword) ? styles.validInput : styles.input}
+                />
+                <Pressable 
+                    style={(validEmail && validPassword ) ? styles.button : styles.buttonDisabled }
+                    disabled={(validEmail && validPassword) ? false : true }
+                    onPress={ () => signUp() }
+                >
+                    <ThemedText style={styles.buttonText}>Sign up</ThemedText>
+                </Pressable>
+            </View>
+        </ThemedView>
+    }
+    else {
+        return (
+            <ThemedView style={styles.container}>
+                <View style={styles.form}>
+                    <ThemedText style={styles.title} >Sign up for an account</ThemedText>
+                    <ThemedText>Email</ThemedText>
+                    <TextInput
+                        style={(validEmail) ? styles.validInput : styles.input}
+                        value={email}
+                        onChangeText={(val) => setEmail(val)}
+                    />
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <ThemedView>
-        <ThemedText>Home Screen</ThemedText>
-        <FlatList
-          data={data}
-          renderItem={ ({item}) => <ListItem title={ item.name } id={ item.id }/> }
-          keyExtractor={ item => item.id }
-        />
-      </ThemedView>
-    </SafeAreaView>
-  );
+                    <ThemedText>Password</ThemedText>
+                    <TextInput
+                        style={(validPassword) ? styles.validInput : styles.input}
+                        secureTextEntry={true}
+                        value={password}
+                        onChangeText={(val) => setPassword(val)}
+                    />
+                    <Pressable
+                        style={(validEmail && validPassword) ? styles.button : styles.buttonDisabled}
+                        disabled={(validEmail && validPassword) ? false : true}
+                        onPress={() => signUp()}
+                    >
+                        <ThemedText style={styles.buttonText}>Sign up</ThemedText>
+                    </Pressable>
+                </View>
+                <Pressable onPress={ () => router.navigate("/signin") }>
+                    <ThemedText style={styles.altlink}>Already have an account? Go to sign in</ThemedText>
+                </Pressable>
+            </ThemedView>
+        )
+    }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
+    container: {
+        flex: 1,
+    },
+    form: {
+        marginHorizontal: 20,
+        marginTop: 50,
+    },
+    title: {
+        textAlign: "center",
+        fontSize: 18,
+    },
+    input: {
+        borderWidth: 2,
+        borderColor: "#666666",
+        borderStyle: "solid",
+        borderRadius: 5,
+        color: "#FFFFFF",
+        padding: 5,
+        marginBottom: 10,
+    },
+    validInput: {
+        borderWidth: 2,
+        borderColor: "#14e383",
+        borderStyle: "solid",
+        borderRadius: 5,
+        color: "#FFFFFF",
+        padding: 5,
+        marginBottom: 10,
+    },
+    button: {
+        borderWidth: 2,
+        borderColor: "#CCCCCC",
+        borderStyle: "solid",
+        borderRadius: 5,
+        padding: 5,
+        marginVertical: 10,
+    },
+    buttonText: {
+        textAlign: "center",
+    },
+    buttonDisabled: {
+        borderWidth: 2,
+        borderColor: "#666666",
+        borderStyle: "solid",
+        borderRadius: 5,
+        padding: 5,
+        marginVertical: 10,
+        opacity: 0.5
+    },
+    altlink: {
+        marginVertical: 10,
+        textAlign: "center",
+    },
+})
