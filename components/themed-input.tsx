@@ -1,17 +1,14 @@
-import { Appearance, useColorScheme, TextInput, type TextInputProps, StyleSheet, Text } from 'react-native'
+import { useColorScheme, TextInput, type TextInputProps, StyleSheet } from 'react-native'
 
 export function ThemedInput( props:TextInputProps ) {
     let colorScheme = useColorScheme()
-    //console.log( colorScheme )
+    console.log( colorScheme )
     if( colorScheme == 'dark' ) {
         return <TextInput  {...props} style={[styles.darkInput]}/>
     }
     else {
         return <TextInput  {...props} style={[styles.lightInput ]}/>
     }
-    return (
-        <Text>color: {colorScheme}</Text>
-    )
 }
 
 const styles = StyleSheet.create({

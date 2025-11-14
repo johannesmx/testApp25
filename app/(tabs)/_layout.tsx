@@ -13,7 +13,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: true,
+        headerShown: false,
         tabBarButton: HapticTab,
       }}>
       <Tabs.Screen
@@ -28,7 +28,7 @@ export default function TabLayout() {
         name="explore"
         options={{
           title: 'Explore',
-          tabBarIcon: ({ color }:any) => <IconSymbol size={28} name="list" color={color} />,
+          tabBarIcon: ({ color }:any) => <IconSymbol size={28} name="book" color={color} />,
         }}
       />
       <Tabs.Screen
