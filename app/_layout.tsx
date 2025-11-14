@@ -35,7 +35,7 @@ export default function RootLayout() {
       <AuthContext.Provider value={FBauth}>
         <DataContext.Provider value={FBfs}>
           <Stack>
-            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="index" options={{ headerShown: false, animation: "default" }} />
             <Stack.Screen name="signin" options={{ headerShown: false }} />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
