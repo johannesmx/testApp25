@@ -2,6 +2,7 @@ import { Appearance, useColorScheme, TextInput, type TextInputProps, StyleSheet 
 
 export function ThemedInput( props:TextInputProps ) {
     let colorScheme = useColorScheme()
+    console.log("input",colorScheme)
     
     if( colorScheme == 'dark' ) {
         return <TextInput  {...props} style={[styles.darkInput,props.style]}/>

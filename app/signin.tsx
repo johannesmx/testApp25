@@ -1,7 +1,8 @@
 import { ThemedView } from "@/components/themed-view";
 import { ThemedText } from "@/components/themed-text";
+import { ThemedInput } from "@/components/themed-input";
 import { Link, useRouter } from "expo-router"
-import { View, TextInput, StyleSheet, Pressable, ActivityIndicator } from 'react-native'
+import { View, TextInput, StyleSheet, Pressable, ActivityIndicator, useColorScheme } from 'react-native'
 import { useState, useEffect, useContext } from 'react'
 import { AuthContext } from "@/contexts/AuthContext";
 import {
@@ -19,6 +20,8 @@ export default function AuthScreen() {
 
     const auth: any = useContext(AuthContext)
     const router = useRouter()
+    // const scheme = useColorScheme()
+    // console.log( scheme )
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
@@ -53,7 +56,7 @@ export default function AuthScreen() {
     const signUp = () => {
         signInWithEmailAndPassword(auth, email, password)
             .then((response) => console.log(response))
-            .catch((error) => console.log(error.message))
+            .catch((error) => console.log(error))
     }
 
     return (
@@ -61,15 +64,19 @@ export default function AuthScreen() {
             <View style={styles.form}>
                 <ThemedText style={styles.title} >Sign in to your account</ThemedText>
                 <ThemedText>Email</ThemedText>
-                <TextInput
+                {/* <TextInput
                     style={(validEmail) ? styles.validInput : styles.input}
                     value={email}
                     onChangeText={(val) => setEmail(val)}
+                /> */}
+                <ThemedInput 
+                    style={(validEmail) ? styles.validInput : ""}
+                    value={email}
+                    onChangeText={(val) => setEmail(val)}
                 />
-
                 <ThemedText>Password</ThemedText>
-                <TextInput
-                    style={(validPassword) ? styles.validInput : styles.input}
+                <ThemedInput
+                    style={(validPassword) ? styles.validInput : ""}
                     secureTextEntry={true}
                     value={password}
                     onChangeText={(val) => setPassword(val)}
@@ -116,7 +123,6 @@ const styles = StyleSheet.create({
         borderColor: "#14e383",
         borderStyle: "solid",
         borderRadius: 5,
-        color: "#FFFFFF",
         padding: 5,
         marginBottom: 10,
     },
