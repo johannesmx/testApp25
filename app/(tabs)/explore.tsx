@@ -10,6 +10,7 @@ import { useContext, useState, useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore'
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { Item } from '@/interfaces/ItemInterface';
 
 
 export default function TabTwoScreen() {
