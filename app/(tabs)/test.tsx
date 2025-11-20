@@ -14,7 +14,7 @@ export default function TestScreen() {
     const logOut = () => {
         signOut(auth)
         .then(() => {
-            router.navigate("../")
+            router.push("/signin")
         })
     }
 
