@@ -6,10 +6,11 @@ import { ThemedView } from '@/components/themed-view';
 import { ThemedButton } from '@/components/themed-button';
 import { AuthContext } from '@/contexts/AuthContext';
 import { DataContext } from '@/contexts/DataContext';
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore'
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { Item } from '@/interfaces/ItemInterface';
 
 
 export default function TabTwoScreen() {
@@ -17,10 +18,15 @@ export default function TabTwoScreen() {
   const [userId, setUserId] = useState<string>("")
   const [docName, setDocName] = useState<string>("")
   const [docDesc, setDocDesc] = useState<string>("")
+  // modal controller
+  // data display
+  const [userdata,setUserData] = useState< Item[] >([])
+  const [loaded,setLoaded] = useState<boolean>(false)
 
-  const scheme = useColorScheme()
   const auth: any = useContext(AuthContext)
   const db: any = useContext(DataContext)
+  const scheme = useColorScheme()
+ 
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -28,6 +34,7 @@ export default function TabTwoScreen() {
     }
     else {
       // user is not authenticated
+      // navigate to sign in
     }
   })
 

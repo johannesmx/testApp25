@@ -3,6 +3,7 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedInput } from "@/components/themed-input";
 import { Link, useRouter } from "expo-router"
 import { View, TextInput, StyleSheet, Pressable, ActivityIndicator } from 'react-native'
+import { useColorScheme } from "react-native";
 import { useState, useEffect, useContext } from 'react'
 import { AuthContext } from "@/contexts/AuthContext";
 import {
@@ -20,6 +21,9 @@ export default function AuthScreen() {
 
     const auth: any = useContext(AuthContext)
     const router = useRouter()
+
+    const scheme = useColorScheme()
+    console.log(scheme)
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
@@ -61,15 +65,10 @@ export default function AuthScreen() {
             <View style={styles.form}>
                 <ThemedText style={styles.title} >Sign up for an account</ThemedText>
                 <ThemedText>Email</ThemedText>
-                {/* <TextInput 
-                    style={(validEmail) ? styles.validInput : styles.input} 
-                    // value={email}
-                    // onChangeText={ (val) => setEmail(val) }
-                /> */}
                 <ThemedInput 
                     value={email} 
                     onChangeText={ (val) => setEmail(val) } 
-                    style={(validEmail) ? styles.validInput : styles.input}
+                    //style={(validEmail) ? styles.validInput : styles.input}
                 />
                 <ThemedText>Password</ThemedText>
                 {/* <TextInput 
@@ -82,7 +81,7 @@ export default function AuthScreen() {
                     value={password} 
                     secureTextEntry={true}
                     onChangeText={ (val) => setPassword(val) } 
-                    style={(validPassword) ? styles.validInput : styles.input}
+                    //style={(validPassword) ? styles.validInput : styles.input }
                 />
                 <Pressable 
                     style={(validEmail && validPassword ) ? styles.button : styles.buttonDisabled }
@@ -143,19 +142,16 @@ const styles = StyleSheet.create({
     },
     input: {
         borderWidth: 2,
-        borderColor: "#666666",
-        borderStyle: "solid",
-        borderRadius: 5,
-        color: "#FFFFFF",
-        padding: 5,
+        // borderColor: "#666666",
+        // borderStyle: "solid",
+        // borderRadius: 5,
+        // padding: 5,
         marginBottom: 10,
     },
     validInput: {
         borderWidth: 2,
         borderColor: "#14e383",
         borderStyle: "solid",
-        borderRadius: 5,
-        color: "#FFFFFF",
         padding: 5,
         marginBottom: 10,
     },
