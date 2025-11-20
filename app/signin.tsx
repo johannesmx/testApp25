@@ -1,7 +1,7 @@
 import { ThemedView } from "@/components/themed-view";
 import { ThemedText } from "@/components/themed-text";
 import { Link, useRouter } from "expo-router"
-import { View, TextInput, StyleSheet, Pressable, ActivityIndicator } from 'react-native'
+import { View, TextInput, StyleSheet, Pressable, ActivityIndicator, Text } from 'react-native'
 import { useState, useEffect, useContext } from 'react'
 import { AuthContext } from "@/contexts/AuthContext";
 import {
@@ -16,6 +16,7 @@ export default function AuthScreen() {
     const [password, setPassword] = useState<string>("")
     const [validPassword, setValidPassword] = useState<boolean>(false)
     const [authenticating, setAuthenticating] = useState<boolean>(true)
+    const [error,setError] = useState<string>("")
 
     const auth: any = useContext(AuthContext)
     const router = useRouter()
@@ -39,6 +40,7 @@ export default function AuthScreen() {
         else {
             setValidEmail(false)
         }
+        setError("")
     }, [email])
 
     useEffect(() => {
@@ -48,12 +50,16 @@ export default function AuthScreen() {
         else {
             setValidPassword(false)
         }
+        setError("")
     }, [password])
 
-    const signUp = () => {
+    const signIn = () => {
         signInWithEmailAndPassword(auth, email, password)
             .then((response) => console.log(response))
-            .catch((error) => console.log(error))
+            .catch((error) => {
+                //console.log(error)
+                setError("Invalid credentials")
+            })
     }
 
     return (
@@ -77,14 +83,15 @@ export default function AuthScreen() {
                 <Pressable
                     style={(validEmail && validPassword) ? styles.button : styles.buttonDisabled}
                     disabled={(validEmail && validPassword) ? false : true}
-                    onPress={() => signUp()}
+                    onPress={() => signIn()}
                 >
                     <ThemedText style={styles.buttonText}>Sign in</ThemedText>
                 </Pressable>
+                <ThemedText style={{ textAlign:"center"}}>{ error }</ThemedText>
             </View>
-            <Pressable onPress={ () => router.navigate("/") }>
-                    <ThemedText style={styles.altlink}>Don't have an account? Go to sign up</ThemedText>
-                </Pressable>
+            <Pressable onPress={() => router.navigate("/")}>
+                <ThemedText style={styles.altlink}>Don't have an account? Go to sign up</ThemedText>
+            </Pressable>
         </ThemedView>
     )
 

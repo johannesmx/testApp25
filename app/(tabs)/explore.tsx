@@ -85,7 +85,7 @@ export default function UserData() {
     // add data to local state
     let data = userdata
     data.push({id: docId, name: name, description: description})
-    setUserData(...userdata, {id: docId, name: name, description: description})
+    setUserData(data)
   }
 
   useEffect( () => {
