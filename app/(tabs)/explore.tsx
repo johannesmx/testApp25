@@ -18,7 +18,6 @@ export default function TabTwoScreen() {
   const [docName, setDocName] = useState<string>("")
   const [docDesc, setDocDesc] = useState<string>("")
   // modal controller
-  const [modalOpen, setModalOpen] = useState<boolean>(false)
   // data display
   const [userdata,setUserData] = useState< Item[] >([])
   const [loaded,setLoaded] = useState<boolean>(false)
@@ -26,8 +25,7 @@ export default function TabTwoScreen() {
   const auth: any = useContext(AuthContext)
   const db: any = useContext(DataContext)
   const scheme = useColorScheme()
-  const auth: any = useContext(AuthContext)
-  const db: any = useContext(DataContext)
+ 
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
