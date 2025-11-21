@@ -1,4 +1,4 @@
-import {Pressable, StyleProp, StyleSheet, Text, ViewStyle, type PressableProps, useColorScheme} from 'react-native'
+import {Pressable, StyleProp, StyleSheet, Text, ViewStyle, TextStyle, type PressableProps, useColorScheme} from 'react-native'
 
 interface ThemedButtonProps extends PressableProps {
     text: string
@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 16,
+        textAlign: "center",
     },
     textDark: {
         color: "#CCCCCC",

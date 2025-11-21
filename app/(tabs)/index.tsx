@@ -24,7 +24,7 @@ export default function HomeScreen() {
       items.push( item )
     })
     setData( items )
-    console.log("data")
+    //console.log("data")
   }
 
   interface ListItemProps {

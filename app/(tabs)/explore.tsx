@@ -1,5 +1,5 @@
 
-import { Platform, StyleSheet, TextInput, Pressable, useColorScheme, Modal } from 'react-native';
+import { Platform, StyleSheet, TextInput, Pressable, useColorScheme, Modal, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -8,9 +8,10 @@ import { AuthContext } from '@/contexts/AuthContext';
 import { DataContext } from '@/contexts/DataContext';
 import { useContext, useState, useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore'
+import { doc, setDoc, collection, getDocs } from 'firebase/firestore'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Item } from '@/interfaces/ItemInterface';
+import { Link } from 'expo-router';
 
 
 export default function TabTwoScreen() {
@@ -49,8 +50,33 @@ export default function TabTwoScreen() {
     await setDoc(doc(db, path, docId), {
       name, description
     })
-
+    // set document to show in interface
+    const newDoc = {id: docId, name: name, description: description }
+    setUserData([...userdata, newDoc ])
+    setDocName("")
+    setDocDesc("")
   }
+
+  // get existing data from Firebase
+  const getData = async () => {
+    if( !userId ) { return }
+    const path = `userdata/${userId}/trackerdata`
+    const fsdata = await getDocs( collection(db, path) )
+    let items:Item[] = []
+    fsdata.forEach( (fsdoc) => {
+      let item:any = fsdoc.data()
+      item.id = fsdoc.id
+      items.push( item )
+    })
+    setUserData( items )
+  }
+
+  useEffect( () => {
+    if( userId ) {
+      getData()
+    }
+  },[userId])
+
   return (
     <SafeAreaView style={styles.container}>
       <Modal
@@ -58,7 +84,7 @@ export default function TabTwoScreen() {
         backdropColor={"black"}
         transparent={true}
       >
-        <ThemedView>
+        <ThemedView style={{ padding:20 }}>
           <ThemedText>Add data to user's collection</ThemedText>
           <ThemedText>item name</ThemedText>
           <TextInput
@@ -78,12 +104,29 @@ export default function TabTwoScreen() {
                 [styles.input, styles.inputLight]
             }
             value={docDesc}
+            multiline={true}
             onChangeText={(value) => setDocDesc(value)}
           />
-          <ThemedButton text="Add" onPress={() => { addData(docName, docDesc) }} />
-            <ThemedButton text="Cancel" onPress={() => setModalOpen(false) } />
+          <ThemedButton text="Add" onPress={() => { 
+            addData(docName, docDesc) 
+            setModalOpen(false)
+          }} />
+          <ThemedButton text="Cancel" onPress={() => setModalOpen(false) } />
         </ThemedView>
       </Modal>
+      <FlatList 
+        data={ userdata } 
+        extraData={ userdata }
+        renderItem={ ({item}) => (
+          <Link href={{
+            pathname: '/(tabs)/[id].tsx',
+            params: { id: item.id }
+          }}>
+            <ThemedText>{item.name}</ThemedText>
+          </Link>
+        )}
+        keyExtractor={item => item.id }
+      />
       <Pressable style={ styles.floatingButton } onPress={() => setModalOpen(true)}>
         <Ionicons name="add" size={40} color={ (scheme == 'dark') ? "white" : "#333333"} />
       </Pressable>
