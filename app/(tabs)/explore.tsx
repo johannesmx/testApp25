@@ -11,7 +11,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { doc, setDoc, collection, getDocs } from 'firebase/firestore'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Item } from '@/interfaces/ItemInterface';
-import { Link } from 'expo-router';
+import { Link, RelativePathString } from 'expo-router';
 
 
 export default function TabTwoScreen() {
@@ -21,13 +21,13 @@ export default function TabTwoScreen() {
   const [docDesc, setDocDesc] = useState<string>("")
   // modal controller
   // data display
-  const [userdata,setUserData] = useState< Item[] >([])
-  const [loaded,setLoaded] = useState<boolean>(false)
+  const [userdata, setUserData] = useState<Item[]>([])
+  const [loaded, setLoaded] = useState<boolean>(false)
 
   const auth: any = useContext(AuthContext)
   const db: any = useContext(DataContext)
   const scheme = useColorScheme()
- 
+
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -51,40 +51,57 @@ export default function TabTwoScreen() {
       name, description
     })
     // set document to show in interface
-    const newDoc = {id: docId, name: name, description: description }
-    setUserData([...userdata, newDoc ])
+    const newDoc = { id: docId, name: name, description: description }
+    setUserData([...userdata, newDoc])
     setDocName("")
     setDocDesc("")
   }
 
   // get existing data from Firebase
   const getData = async () => {
-    if( !userId ) { return }
+    if (!userId) { return }
     const path = `userdata/${userId}/trackerdata`
-    const fsdata = await getDocs( collection(db, path) )
-    let items:Item[] = []
-    fsdata.forEach( (fsdoc) => {
-      let item:any = fsdoc.data()
+    const fsdata = await getDocs(collection(db, path))
+    let items: Item[] = []
+    fsdata.forEach((fsdoc) => {
+      let item: any = fsdoc.data()
       item.id = fsdoc.id
-      items.push( item )
+      items.push(item)
     })
-    setUserData( items )
+    setUserData(items)
   }
 
-  useEffect( () => {
-    if( userId ) {
+  useEffect(() => {
+    if (userId) {
       getData()
     }
-  },[userId])
+  }, [userId])
+
+  interface RouteObject {
+    pathname: string
+    params: { id: string, name: string }
+  }
+  const Item = (props: any) => {
+    const Route:RouteObject = {
+      pathname: '/(tabs)/[id].tsx',
+      params: { id: props.item.id, name: props.item.name }
+    }
+
+    return (
+      <Link href={Route}>
+        <ThemedText>{props.item.name}</ThemedText>
+      </Link>
+    )
+  }
 
   return (
     <SafeAreaView style={styles.container}>
       <Modal
-        visible={ modalOpen }
+        visible={modalOpen}
         backdropColor={"black"}
         transparent={true}
       >
-        <ThemedView style={{ padding:20 }}>
+        <ThemedView style={{ padding: 20 }}>
           <ThemedText>Add data to user's collection</ThemedText>
           <ThemedText>item name</ThemedText>
           <TextInput
@@ -107,28 +124,21 @@ export default function TabTwoScreen() {
             multiline={true}
             onChangeText={(value) => setDocDesc(value)}
           />
-          <ThemedButton text="Add" onPress={() => { 
-            addData(docName, docDesc) 
+          <ThemedButton text="Add" onPress={() => {
+            addData(docName, docDesc)
             setModalOpen(false)
           }} />
-          <ThemedButton text="Cancel" onPress={() => setModalOpen(false) } />
+          <ThemedButton text="Cancel" onPress={() => setModalOpen(false)} />
         </ThemedView>
       </Modal>
-      <FlatList 
-        data={ userdata } 
-        extraData={ userdata }
-        renderItem={ ({item}) => (
-          <Link href={{
-            pathname: '/(tabs)/[id].tsx',
-            params: { id: item.id }
-          }}>
-            <ThemedText>{item.name}</ThemedText>
-          </Link>
-        )}
-        keyExtractor={item => item.id }
+      <FlatList
+        data={userdata}
+        extraData={userdata}
+        renderItem={({ item }) => <Item item={item} />}
+        keyExtractor={item => item.id}
       />
-      <Pressable style={ styles.floatingButton } onPress={() => setModalOpen(true)}>
-        <Ionicons name="add" size={40} color={ (scheme == 'dark') ? "white" : "#333333"} />
+      <Pressable style={styles.floatingButton} onPress={() => setModalOpen(true)}>
+        <Ionicons name="add" size={40} color={(scheme == 'dark') ? "white" : "#333333"} />
       </Pressable>
 
     </SafeAreaView>
